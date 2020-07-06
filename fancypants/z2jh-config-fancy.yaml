@@ -1,0 +1,189 @@
+proxy:
+  secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
+  https:
+    enabled: false
+  service:
+    type: ClusterIP
+
+hub:
+  allowNamedServers: True
+  namedServerLimitPerUser: 2
+  shutdownOnLogout: True
+  extraConfig: 
+    modifystart: | 
+      c.KubeSpawner.cmd = ['/usr/local/bin/start-singleuser.sh']
+    kubespawn: |
+      c.KubeSpawner.profile_form_template = """
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" type="text/javascript" charset="utf-8"> </script>
+        <script>
+         $(function () { $('[data-toggle="tooltip"]').tooltip({container:'body'}) })
+        // JupyterHub 0.8 applied form-control indisciminately to all form elements.
+        // Can be removed once we stop supporting JupyterHub 0.8
+        $(document).ready(function() {
+            $('#kubespawner-profiles-list input[type="radio"]').removeClass('form-control');
+            $('input[type=radio]').on('change', function() {
+              $(this).closest("form").submit();
+            });
+        });
+
+        function picksub(val) {
+          var pro=document.getElementsByName("profile");
+          for (i=0; i < pro.length; i++) { pro[i].checked = false }
+          pro.checked = true;
+          document.forms["spawn_form"].submit();
+        }
+        </script>
+        <style>
+        /* The profile description should not be bold, even though it is inside the <label> tag */
+        #kubespawner-profiles-list label p { font-weight: normal; }
+        .bigold-button { height:100px; margin:25px; white-space:wrap;
+                        line-height:75px; text-align:center; }
+        .image-button { height:100px; width:150px; margin:25px; white-space:wrap;
+                        line-height:75px; text-align:center; }
+        .tooltip > .tooltip-inner {  padding: 15px; font-size: 20px; }
+        </style>
+        <div class='form-group d-flex flex-wrap' id='kubespawner-profiles-list'>
+        <div class="btn-group btn-group-lg btn-group-toggle" data-toggle="buttons">
+        {% for profile in profile_list %}
+           {% if profile.default %}
+              <label class="btn btn-primary bigold-button text-wrap" autocomplete="off"
+           {% else %}
+              <label class="btn btn-info image-button text-wrap" autocomplete="off"
+           {% endif %}
+                {% if profile.description %} 
+                    data-toggle="tooltip" data-placement="top" 
+                    trigger="hover"
+                    title="{{ profile.description }}" {% endif %}
+        >
+                <input type='radio' name='profile'
+                 id='profile-item-{{ loop.index0 }}' 
+                 value='{{ loop.index0 }}' />
+                <strong>{{ profile.display_name }}</strong>
+        </label>
+        {% endfor %}
+        </div> </div>
+        <br>
+        """
+    kubevol: |
+      from kubernetes import client
+      from kubespawner.utils import get_k8s_model
+      from kubernetes.client.models import ( V1Volume, V1VolumeMount )
+      import json
+      def modify_pod_hook(spawner, pod):
+          try:
+              with open('/srv/jupyterhub/shared-mounts.json') as json_data:
+                sharedVols = json.load(json_data)
+                user=spawner.user.name
+                for mnt in sharedVols:
+                   if user in sharedVols[mnt]:
+                     pod.spec.volumes.append(
+                       get_k8s_model(V1Volume,
+                        { 'name' : mnt,
+                          'persistentVolumeClaim': { 'claimName' : 'shared-' + mnt }
+                        }
+                        )
+                     )
+                     # Note implicitly only 1 container...
+                     pod.spec.containers[0].volume_mounts.append(
+                       get_k8s_model(V1VolumeMount,
+                           { 'name' : mnt, 'mountPath' : '/home/jovyan/shared/' + mnt } )
+                     )
+          except Exception as e:
+              spawner.log.info("Exception in shared-mounts" + str(e))
+              pass
+          return pod
+      c.KubeSpawner.modify_pod_hook = modify_pod_hook
+
+singleuser:
+  startTimeout: 900
+  image:
+    name: dirkcgrunwald/notebook-dev
+    tag: v1.0.114
+  debug: true
+  defaultUrl: "/lab"
+  memory:
+    limit: 1G
+    guarantee: 300M
+  cpu:
+    limit: 1.0
+    guarantee: 0.05
+  storage:  
+    capacity: 0.5Gi
+    dynamic:
+      storageClass: nfs
+  profileList:
+    - display_name: "Default<br>Coding<br>Environment"
+      description: "Should work for most classes"
+      default: true
+    - display_name: "1300<br>Starting<br>Computing"
+      description: "C++ and Python"
+    - display_name: "2270<br>Data<br>Structures"
+      description: "C++"
+      kubespawner_override:
+        cpu_limit: 1
+        cpu_guarantee: 0.05
+        mem_limit: 2G
+        mem_guarantee: 350M
+    - display_name: "2400<br>Computer<br>Systems"
+      description: "C++, OpenMP"
+      kubespawner_override:
+        cpu_limit: 1
+        cpu_guarantee: 0.05
+        mem_limit: 2G
+        mem_guarantee: 350M
+    - display_name: "2400<br>Perflab<br>Grading"
+      description: "C++, OpenMP"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-dev:v1.0.114"
+        cpu_limit: 2
+        cpu_guarantee: 1.0
+        mem_limit: 2G
+        mem_guarantee: 350M
+    - display_name: "3022<br>Data Science<br>Algorithms"
+      description: "Python + Data Science Libraries"
+    - display_name: "3155<br>Programming<br>Languages"
+      description: "Java and Scala"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-pl-dev:v1.0.114"
+        cpu_limit: 2
+        cpu_guarantee: 0.20
+        mem_limit: 3G
+        mem_guarantee: 2000M
+    - display_name: "3202<br>Artificial<br>Intelligence"
+      description: "Python + AI tools"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-ai-dev:v1.0.114"
+    - display_name: "3287<br>Database<br>Systems"
+      description: "Python, SQL and XML tools"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-db-dev:v1.0.113"
+    - display_name: "4446/5446<br>Chaotic<br>Dynamics"
+      description: "basic + TISEAN"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-chaos-dev:v1.0.114"
+    - display_name: "4622<br>Machine<br>Learning"
+      description: "Python + ML tools"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-ai-dev:v1.0.114"
+    - display_name: "----<br>Test"
+      description: "Testing prior to deployment"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-dev:v1.0.114"
+#
+# Cull notebooks that are idle more than half an hour
+# and check every 5 minutes (300 seconds)
+cull:
+  timeout: 900
+  every: 300
+
+prePuller:
+  continuous:
+    enabled: true
+  hook:
+     enabled: false
+
+auth:
+  admin:
+    users:
+      - admin
+      - try

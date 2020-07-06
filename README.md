@@ -6,5 +6,6 @@ There are three setup directions that build on each other.
 * [Jupyterhub w/o TLS](basic/README.md)
 * [Adding in TLS for HTTPS or secure connections](basic-with-ssh/README.md)
 * [Adding in NFS including shared volumes](basic-with-nfs-volumes/README.md)
+* [Building a fancy environment](fancypants/README.md)
 
 The assumptions in each guide is that you have a Linux computer. For the TLS guide, you need to have a public IP.

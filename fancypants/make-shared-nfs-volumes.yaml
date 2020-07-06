@@ -1,0 +1,23 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: shared-example
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: shared-another
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Mi
