@@ -59,7 +59,7 @@ This will take a few seconds and you'll eventually see a message thanking you fo
 
 You can check that things are running using, e.g.:
 ```
-use@host:~/zero-to-jupyterhub-k3s/basic$ kubectl get po
+user@host:~/zero-to-jupyterhub-k3s/basic$ kubectl get po
 NAME           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
 kubernetes     ClusterIP   10.43.0.1      <none>        443/TCP    4h31m
 proxy-api      ClusterIP   10.43.70.164   <none>        8001/TCP   6s
@@ -81,7 +81,7 @@ You now have a basic working Z2JH setup.
 
 Z2JH comes with configuration options to automatically create a security certificate using `letsencrypt` and uses a "load balancer" to connect to an internal "ingress" that connects to the the internal jupyterhub proxy (`proxy-public` in the above). In environments like Google Kubernetes Enginer (GKE) this will connect ports 80 and 443 to `proxy-public` and the internally configure "ingress" will automatically request your security certificates.
 
-Unfortunatly, the basic install of `k3s` directly uses an `traefik` as the ingress and expects to resolve all TLS/HTTPS connections there. In [config.yaml](config.yaml), we've disabled Z2JH from using HTTPS. If you want HTTPS, see the next setup guide.
+Unfortunatly, the basic install of `k3s` directly uses `traefik` as the ingress and expects to resolve all TLS/HTTPS connections there, meaning Z2JH never gets the pure HTTPS connections. In [config.yaml](config.yaml), we've disabled Z2JH from using HTTPS. If you want HTTPS, see the next setup guide.
 
 Because our [config.yaml](config.yaml) directs Z2JH to use an IP address in the cluster, we have to tell the public network address how to connect to the internal service. This is done by file [jupyter-ingress.yaml](jupyter-ingress.yaml).
 

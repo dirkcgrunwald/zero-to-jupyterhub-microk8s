@@ -1,8 +1,8 @@
 # Z2JH on k3s with TLS / HTTPS
 
-As mentioned in the basic guide, `z2jh` uses an ingress mechanism (`traefik`) and automatically configures Z2JH to get security certificates for that ingress.
+As mentioned in the basic guide, Z2JH uses an ingress mechanism (`traefik`) and automatically configures Z2JH to get security certificates for that ingress.
 
-`k3s` _also_ uses `traefik` as the ingress and TLS termination, meaning that any HTTPS traffic stops at the "system level" because getting to the "Z2JH level". That's why the basic setup disabled HTTPS connections.
+K3s _also_ uses `traefik` as the ingress and TLS termination, meaning that any HTTPS traffic stops at the "system level" before getting to the "Z2JH level". That's why the basic setup disabled HTTPS connections.
 
 Now, we're going to see how to enable HTTPS by telling the `traefik` of `k3s` what our certificates are. We'll be using `letsencrypt` to automate the certificates.
 
@@ -12,14 +12,14 @@ This guide builds on the past. Make certain you have a working environment with 
 
 ## First, install `cert-manager`
 
-[cert-manager](https://cert-manager.io/) is a system for managing getting new TLS certificates. There are several good [tutorials on setting up `cert-manager` with `k3s`](https://opensource.com/article/20/3/ssl-letsencrypt-k3s) and we're going to cut to the chase for z2jh.
+[cert-manager](https://cert-manager.io/) is a system for managing getting new TLS certificates. There are several good [tutorials on setting up `cert-manager` with `k3s`](https://opensource.com/article/20/3/ssl-letsencrypt-k3s) and we're going to cut to the chase for Z2JH.
 
 Install `cert-manager` using the fast-and-dangerous method:
 ```
 kubectl create namespace cert-manager
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.2/cert-manager.yaml
 ```
-The `cert-manager` will install of its stuff in the `cert-manager` namespace. This will make it easy to clean up later by just deleting that namespace.
+The `cert-manager` will install all of its stuff in the `cert-manager` namespace. This will make it easy to clean up later by just deleting that namespace.
 
 ## Second, create a certificate
 
@@ -49,7 +49,6 @@ The thing to look for is the word "True"
 Now, request a certificate using:
 ```
 user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl apply -f mine-cert.yaml
-certificate.cert-manager.io/jupyter-tls created
 ```
 You should inspect the certificate and wait for it to say "True":
 ```

@@ -6,7 +6,7 @@ This guide walks you though installing an `nfs-server-provisioner` that then let
 
 ## Install the NFS server provisioner
 
-Deploy an NFS volume provisioner [using Helm](https://hub.helm.sh/charts/stable/nfs-server-provisioner/1.1.1)
+Deploy an NFS volume provisioner [using Helm](https://hub.helm.sh/charts/stable/nfs-server-provisioner/1.1.1) with the provides [NFS configuration file](nfs-config.yaml).
 
 ```
 helm repo add stable https://kubernetes-charts.storage.googleapis.com 
@@ -17,7 +17,7 @@ The supplied configuration will try to create a 20Gi volume from which individua
 
 ## Configure Z2JH to use NFS volumes
 
-The file (z2jh-config-with-nfs.yaml)[z2jh-config-with-nfs.yaml] changes the storage allocation information to give each user 0.5Mi of storage from the NFS server. Update the Jupyterhub configurating using that config file:
+The file [z2jh-config-with-nfs.yaml](z2jh-config-with-nfs.yaml) changes the storage allocation information to give each user 0.5Gi of storage from the NFS server. Update the Jupyterhub configurating using that config file:
 ```
 helm upgrade jhub jupyterhub/jupyterhub --version=0.9.0 --values=z2jh-config-with-nfs.yaml
 ```
@@ -27,11 +27,13 @@ user@host:~/zero-to-jupyterhub-k3s/basic-with-nfs-volumes$ kubectl get pvc claim
 NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 claim-try   Bound    pvc-88ddd225-2fec-4354-b9ce-c8c7a62d6f10   512Mi      RWO            nfs            40s
 ```
-Although the volume appears to be limited in size, there doesn't appear to be actual storage quotas, meaning one user can suck up all the storage.
+Although the volume appears to be limited in size, there don't appear to be actual storage quotas, meaning one user can suck up all the storage.
 
 ## Using shared volumes
 
-It's also possible to create additional volumes and then share them between users. he file (z2jh-config-with-shared-nfs.yaml)[z2jh-config-with-shared-nfs.yaml] changes the storage allocation information to mount a single PVC called `jupyterhub-shared-volume` at location `$HOME/shared/example`. This configuration isn't that useful but can serve as the basis for a more robust setup.
+It's also possible to create additional volumes and then share them between users. The file [z2jh-config-with-shared-nfs.yaml](z2jh-config-with-shared-nfs.yaml) changes the storage allocation information to mount a single PVC called `jupyterhub-shared-volume` at location `$HOME/shared/example`. The shared volume needs to be created before you try to mount it or users will hang waiting for the volume to be available.
+
+This configuration isn't that useful but can serve as the basis for a more robust setup.
 
 First, create the volume:
 ```
