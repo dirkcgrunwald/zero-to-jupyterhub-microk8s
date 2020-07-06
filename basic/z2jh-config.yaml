@@ -5,5 +5,8 @@ proxy:
   service:
     type: ClusterIP
 
+hub:
+  shutdownOnLogout: True
+
 singleuser:
   defaultUrl: "/lab"

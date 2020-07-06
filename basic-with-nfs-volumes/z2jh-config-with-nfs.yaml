@@ -1,0 +1,16 @@
+proxy:
+  secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
+  https:
+    enabled: false
+  service:
+    type: ClusterIP
+
+hub:
+  shutdownOnLogout: True  
+
+singleuser:
+  defaultUrl: "/lab"
+  storage:
+    capacity: 0.5Gi
+    dynamic:
+      storageClass: nfs
