@@ -4,4 +4,4 @@ persistence:
   size: 20Gi
   
 storageClass:
-  defaultClass: true
+  defaultClass: false
