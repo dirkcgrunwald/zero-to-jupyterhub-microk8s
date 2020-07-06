@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jupyter-ingress
+spec:
+  rules:
+  - host: host.example.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: proxy-public
+          servicePort: 80
+  tls:
+  - hosts:
+    - host.example.com
+    secretName: jupyter-tls

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: jupyter-tls
+  namespace: default
+spec:
+  secretName: jupyter-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: host.example.com
+  dnsNames:
+  - host.example.com
