@@ -32,7 +32,7 @@ and see information about your (single) node.
 
 If you're running Ubuntu you can do:
 ```
-https://helm.sh/docs/intro/install/
+sudo snap install helm --classic
 ```
 and in general, you can use
 ```
@@ -53,7 +53,7 @@ Make certain you're in the "basic" directory since some file paths assume that.
 
 The quick-start steps are:
 ```
-helm install jhub jupyterhub/jupyterhub --version=0.9.0 --values=config.yaml
+helm install jhub jupyterhub/jupyterhub --version=0.9.0 --values=z2jh-config.yaml
 ```
 This will take a few seconds and you'll eventually see a message thanking you for installing jupyterhub.
 
