@@ -1,0 +1,9 @@
+proxy:
+  secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
+  https:
+    enabled: false
+  service:
+    type: ClusterIP
+
+singleuser:
+  defaultUrl: "/lab"
