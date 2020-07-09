@@ -1,0 +1,24 @@
+deployment:
+  # Resource limitations for the pod
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+ngshare:
+  hub_api_token: demo_token_9wRp0h4BLzAnC88jjBfpH0fa4QV9tZNI
+  # Please change the line below with the namespace your Z2JH helm chart is installed under
+  # You can omit this value if you're installing ngshare in the same namespace
+  # hub_api_url: http://hub.your-z2jh-namespace.svc.cluster.local:8081/hub/api
+  admins:
+    - grunwald
+    - jedbrown
+
+pvc:
+  # Amount of storage to allocate
+  storage: 1Gi
+  storageClassName: "nfs"
+
