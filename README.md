@@ -1,6 +1,6 @@
-# Zero-to-Jupyterhub on k3s
+# Zero-to-Jupyterhub on microk8s
 
-`k3s` is version of Kubernetes that is simple to install. This repo contains instructions and sample files to install [Zero-to-JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/). This can be useful for setting up a testing environment or an environment for a tutorial or class.
+`microk8s` is version of Kubernetes distributed by Canonical that is simple to install. This repo contains instructions and sample files to install [Zero-to-JupyterHub](https://zero-to-jupyterhub.readthedocs.io/en/latest/). This can be useful for setting up a testing environment or an environment for a tutorial or class.
 
 There are three setup directions that build on each other. 
 * [Jupyterhub w/o TLS](basic/README.md)
