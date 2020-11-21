@@ -9,9 +9,9 @@ This guide walks you though installing an `nfs-server-provisioner` that then let
 Deploy an NFS volume provisioner [using Helm](https://hub.helm.sh/charts/stable/nfs-server-provisioner/1.1.1) with the provides [NFS configuration file](nfs-config.yaml).
 
 ```
-helm repo add stable https://kubernetes-charts.storage.googleapis.com 
-helm repo update
-helm install jhub-nfs stable/nfs-server-provisioner --namespace default --values=nfs-config.yaml
+microk8s helm3 repo add stable https://kubernetes-charts.storage.googleapis.com 
+microk8s helm3 repo update
+microk8s helm3  install jhub-nfs stable/nfs-server-provisioner --version=1.1.2 --namespace default --values=nfs-config.yaml
 ```
 The supplied configuration will try to create a 20Gi volume from which individual user volumes are carved.
 
@@ -19,11 +19,11 @@ The supplied configuration will try to create a 20Gi volume from which individua
 
 The file [z2jh-config-with-nfs.yaml](z2jh-config-with-nfs.yaml) changes the storage allocation information to give each user 0.5Gi of storage from the NFS server. Update the Jupyterhub configurating using that config file:
 ```
-helm upgrade jhub jupyterhub/jupyterhub --version=0.9.0 --values=z2jh-config-with-nfs.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.3 --values=z2jh-config-with-nfs.yaml
 ```
 Now, try to log into your Jupyterhub again using a new user (_e.g._ user 'try' with password 'again'). It should start up as normal, but when you look at the PVC you'll see it's an NFS volume rather than a built-in one.
 ```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-nfs-volumes$ kubectl get pvc claim-try
+user@host:~/zero-to-jupyterhub-k3s/basic-with-nfs-volumes$ microk8s kubectl get pvc claim-try
 NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 claim-try   Bound    pvc-88ddd225-2fec-4354-b9ce-c8c7a62d6f10   512Mi      RWO            nfs            40s
 ```
@@ -37,11 +37,11 @@ This configuration isn't that useful but can serve as the basis for a more robus
 
 First, create the volume:
 ```
-kubectl apply -f make-shared-nfs-volume.yaml
+microk8s kubectl apply -f make-shared-nfs-volume.yaml
 ```
 and then upgrade JupyterHub to use the shared volume:
 ```
-helm upgrade jhub jupyterhub/jupyterhub --version=0.9.0 --values=z2jh-config-with-shared-nfs.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.3 --values=z2jh-config-with-shared-nfs.yaml
 ```
 
 Changes to volumes, such as adding a new shared volume, will only take affect when the "pod" for a given user is created. Because of that, all of out `z2jh-config.yaml` files contain this stanza:

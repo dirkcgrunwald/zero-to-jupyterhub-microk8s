@@ -3,7 +3,13 @@ proxy:
   https:
     enabled: false
   service:
-    type: ClusterIP
+    type: LoadBalancer
+  https:
+    enabled: true
+    hosts:
+      - "beast.cs.colorado.edu"
+    letsencrypt:
+      contactEmail: "grunwald@colorado.edu"
 
 hub:
   shutdownOnLogout: True  

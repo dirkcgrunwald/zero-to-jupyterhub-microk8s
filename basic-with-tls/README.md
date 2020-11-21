@@ -1,94 +1,38 @@
-# Z2JH on k3s with TLS / HTTPS
+# Z2JH on microk8s with TLS / HTTPS
 
 As mentioned in the basic guide, Z2JH uses an ingress mechanism (`traefik`) and automatically configures Z2JH to get security certificates for that ingress.
 
-K3s _also_ uses `traefik` as the ingress and TLS termination, meaning that any HTTPS traffic stops at the "system level" before getting to the "Z2JH level". That's why the basic setup disabled HTTPS connections.
+When using `microk8s` configured with `metallb` implementing the `LoadBalancer` service time, you can just directly use the Z2JH setup.
 
-Now, we're going to see how to enable HTTPS by telling the `traefik` of `k3s` what our certificates are. We'll be using `letsencrypt` to automate the certificates.
+## Update the config to use security
 
-## Make certain you have a working basic environment
-
-This guide builds on the past. Make certain you have a working environment with ingress, _etc_.
-
-## First, install `cert-manager`
-
-[cert-manager](https://cert-manager.io/) is a system for managing getting new TLS certificates. There are several good [tutorials on setting up `cert-manager` with `k3s`](https://opensource.com/article/20/3/ssl-letsencrypt-k3s) and we're going to cut to the chase for Z2JH.
-
-Install `cert-manager` using the fast-and-dangerous method:
+The Z2JH chart supports using [letsencrypt](https://letsencrypt.org/) to automatically generate a TLS certificte for your host. You need to provide the hostname (e.g. `beast.cs.colorado.edu` in this example) and your email (e.g. `grunwald@colorado.edu` in this example).
 ```
-kubectl create namespace cert-manager
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.2/cert-manager.yaml
+  service:
+    type: LoadBalancer
+  https:
+    enabled: true
+    hosts:
+      - "beast.cs.colorado.edu"
+    letsencrypt:
+      contactEmail: "grunwald@colorado.edu"
 ```
-The `cert-manager` will install all of its stuff in the `cert-manager` namespace. This will make it easy to clean up later by just deleting that namespace.
-
-## Second, create a certificate
-
-`cert-manager` works by having you create two documents (an _issuer_ and a _certificate_) and then indicating to the `ingress` that you want to associate that certificate with a specific network endpoint.
-
-The _issuer_ is one of many possible services that issue TLS security certificates. We'll use `letsencrypt` which is free. Letsencrypt has a "staging" service and a "production" service. The production service is rate limited meaning that if you make mistakes and hose things ups, it will block you for some period of time.
-
-Once the issuer is configured, we can request a certificate. The actual certificate contents are stored in a `secret` called `jupyter-tls`. Later, we'll update the `ingress` to read the certificate from that secret.
-
-* Modify [le-prod-issuer.yaml](le-prod-issuer.yaml) and change `email` from `contact@example.com` to your email address.
-* Modify [le-prod-cert.yaml](le-prod-cert.yaml) and replace two instances of `host.example.com` with your hostname.
-
-### Create Issuer
-Now, create the issuer record:
+Then, you should be able to update your Helm configuration
 ```
-kubectl apply -f le-prod-issuer.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.0 --values=z2jh-config.yaml
 ```
-Then, check that the issuer is happy and running:
+It may take a few minutes for your `LoadBalancer` to register an address,
+and when you check the service endpoints, you should now see it serving port 443 as well as port 80:
 ```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl get clusterissuer
-NAME               READY   AGE
-letsencrypt-prod   True    36s
-```
-The thing to look for is the word "True"
-
-### Get Cert
-Now, request a certificate using:
-```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl apply -f mine-cert.yaml
-```
-You should inspect the certificate and wait for it to say "True":
-```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl get cert
-NAME          READY   SECRET        AGE
-jupyter-tls   False   jupyter-tls   5s
-```
-This may take a little time but not more than a minute or so. If it takes more than 5 minutes, read [tutorials on setting up `cert-manager` with `k3s`](https://opensource.com/article/20/3/ssl-letsencrypt-k3s) on how to debug things.
-
-At this point, you should have a secret holding your certificate:
-```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl get secret jupyter-tls
-NAME          TYPE                DATA   AGE
-jupyter-tls   kubernetes.io/tls   3      3m41s
+grunwald@beast:~/zero-to-jupyterhub-microk8s/basic-with-tls$ microk8s kubectl get svc
+NAME           TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)                      AGE
+kubernetes     ClusterIP      10.152.183.1     <none>          443/TCP                      5h40m
+proxy-api      ClusterIP      10.152.183.111   <none>          8001/TCP                     47m
+hub            ClusterIP      10.152.183.226   <none>          8081/TCP                     47m
+proxy-http     ClusterIP      10.152.183.134   <none>          8000/TCP                     10s
+proxy-public   LoadBalancer   10.152.183.5     192.12.242.33   443:31798/TCP,80:30800/TCP   47m
 ```
 
-## Third, update the ingress to use your certificate
+Now, when you visit your host using `https` you should have a secure connection. You may need to restart your browser or try an alternate browser if the old certificate is confusing your browser.
 
-Now,
-* Modify [jupyter-ingress-tls.yaml](jupyter-ingress-tls.yaml) and replace two instances of `host.example.com` with your hostname.
-
-and then update the `ingress`:
-```
-user@host:~/zero-to-jupyterhub-k3s/basic-with-tls$ kubectl apply -f le-prod-ingress.yaml 
-ingress.networking.k8s.io/jupyter-ingress configured
-```
-
-Now, when you visit your host using `https` you should have a secure connection. You may need to restart your browser or try an alternate browser if the old certificate (which uses a dummy certificate for `https://example.com`) is confusing your browser.
-
-## Cleaning up
-
-We used a quick-and-easy way to install `cert-manager`, so you can't use `helm` to delete it.
-However, you can uninstall `cert-manager` by deleting the namespace:
-```
-kubectl delete namespace cert-manager
-```
-You can clean up the certificates and issues using
-```
-kubectl delete secret jupyter-tls
-kubectl delete cert jupyter-tls
-kubectl delete clusterissuer letsencrypt-prod
-```
-and then clean up the others as in the basic guide.
+The letsencrypt certificate will be automatically renewed as needed.
