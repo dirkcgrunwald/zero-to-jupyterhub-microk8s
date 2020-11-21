@@ -103,8 +103,8 @@ hub:
 singleuser:
   startTimeout: 900
   image:
-    name: dirkcgrunwald/notebook-dev
-    tag: v1.0.114
+    name: docker.io/dirkcgrunwald/notebook
+    tag: v1.0.121
   debug: true
   defaultUrl: "/lab"
   memory:
@@ -174,7 +174,7 @@ singleuser:
     - display_name: "----<br>Test"
       description: "Testing prior to deployment"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-dev:v1.0.114"
+        image: "docker.io/dirkcgrunwald/notebook:v1.0.121"
 #
 # Cull notebooks that are idle more than half an hour
 # and check every 5 minutes (300 seconds)
