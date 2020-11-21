@@ -3,7 +3,13 @@ proxy:
   https:
     enabled: false
   service:
-    type: ClusterIP
+    type: LoadBalancer
+  https:
+    enabled: true
+    hosts:
+      - "beast.cs.colorado.edu"
+    letsencrypt:
+      contactEmail: "grunwald@colorado.edu"
 
 hub:
   allowNamedServers: True
@@ -57,7 +63,7 @@ hub:
         >
                 <input type='radio' name='profile'
                  id='profile-item-{{ loop.index0 }}' 
-                 value='{{ loop.index0 }}' />
+                 value='{{ profile.slug }}' />
                 <strong>{{ profile.display_name }}</strong>
         </label>
         {% endfor %}

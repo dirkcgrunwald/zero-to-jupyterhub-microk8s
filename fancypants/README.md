@@ -25,7 +25,7 @@ sh COPY-TO-HUB.sh shared-mounts.json shared-mounts.json
 ```
 The volumes need to exist before they are referenced or the users will "hang" waiting for them to exist. Create the sample volumes using
 ```
-kubectl apply -f make-shared-nfs-volumes.yaml
+microk8s kubectl apply -f make-shared-nfs-volumes.yaml
 ```
 
 ## Fancy layout
@@ -34,5 +34,5 @@ The remainder of the changes in the [z2jh-config-fancy.yaml](z2jh-config-fancy.y
 
 In order to enable the fancy layout, just upgrade Jupyterhub:
 ```
-helm upgrade jhub jupyterhub/jupyterhub --version=0.9.0 --values=z2jh-config-fancy.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.3 --values=z2jh-config-fancy.yaml
 ```
