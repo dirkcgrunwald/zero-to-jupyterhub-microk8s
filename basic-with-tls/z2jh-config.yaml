@@ -1,0 +1,17 @@
+proxy:
+  secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
+  service:
+    type: LoadBalancer
+  https:
+    enabled: true
+    hosts:
+      - "beast.cs.colorado.edu"
+    letsencrypt:
+      contactEmail: "grunwald@colorado.edu"
+
+
+hub:
+  shutdownOnLogout: True
+
+singleuser:
+  defaultUrl: "/lab"
