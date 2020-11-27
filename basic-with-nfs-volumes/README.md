@@ -41,7 +41,7 @@ microk8s kubectl apply -f make-shared-nfs-volume.yaml
 ```
 and then upgrade JupyterHub to use the shared volume:
 ```
-microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.3 --values=z2jh-config-with-shared-nfs.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.5 --values=z2jh-config-with-shared-nfs.yaml
 ```
 
 Changes to volumes, such as adding a new shared volume, will only take affect when the "pod" for a given user is created. Because of that, all of out `z2jh-config.yaml` files contain this stanza:
