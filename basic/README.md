@@ -4,16 +4,16 @@
 
 Following the directions at [microk8s.io](https://microk8s.io/), which are:
 ```
-sudo snap install microk8s --classic
+sudo snap install microk8s --channel=1.19/stable --classic
 ```
 
 You need to [add additional modules](https://microk8s.io/docs/addons):
 ```
-microk8s enable dashboard dns storage cilium metallb helm3
+microk8s enable rbac dashboard dns storage metallb helm3 cilium
 ```
 When you add the `metallb` module, you will be asked for a range of IP addresses that the load balancer can use when services request a `LoadBalancer` service type. If your host IP address is `123.456.789.123` you should enter `123.456.789.123-123.456.789.123` because it wants a range of values.
 
-## Add access to your k3s cluster
+## Add access to your microk8s cluster
 Microk8s uses the `microk8s` command as a prefix, similar to minikube.
 When you first run `microk8s kubectl get po` you'll be prompted to add yourself to the microk8s group and log back in. That provides the permissions to access the needed credentials.
 
@@ -29,7 +29,10 @@ and see information about your (single) node.
 
 Microk8s comes with it's own version of Helm that is executed by prefixing with `microk8s` as in `microk8s helm`.
 
-You may want to install a standard release as well but it won't pick up the fact that you need to prefix your `kubectl` commands using `microk8s kuebctl`. If you're running Ubuntu you can do:
+You may want to install a standard release as well but it won't pick up the fact that you need to prefix your `kubectl` commands using `microk8s kuebctl`.
+I also found that the version of `helm3` used in microk8s had problems with recent JupyterHub Helm scripts, so you may want to
+use a different version.
+If you're running Ubuntu you can do:
 ```
 sudo snap install helm --classic
 ```
@@ -52,7 +55,7 @@ Make certain you're in the "basic" directory since some file paths assume that.
 
 The quick-start steps are:
 ```
-microk8s helm3 install jhub jupyterhub/jupyterhub --version=0.10.5 --values=z2jh-config.yaml
+microk8s helm3 install jhub jupyterhub/jupyterhub --version=1.00.0 --values=z2jh-config.yaml
 ```
 This will take a few seconds and you'll eventually see a message thanking you for installing jupyterhub.
 
