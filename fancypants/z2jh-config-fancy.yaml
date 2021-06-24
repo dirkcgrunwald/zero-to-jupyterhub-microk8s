@@ -1,3 +1,6 @@
+debug:
+  enabled: true
+
 proxy:
   secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
   https:
@@ -15,6 +18,12 @@ hub:
   allowNamedServers: True
   namedServerLimitPerUser: 2
   shutdownOnLogout: True
+  config:
+    Authenticator:
+      admin_users:
+        - admin
+        - try
+
   extraConfig: 
     modifystart: | 
       c.KubeSpawner.cmd = ['/usr/local/bin/start-singleuser.sh']
@@ -105,7 +114,6 @@ singleuser:
   image:
     name: docker.io/dirkcgrunwald/notebook
     tag: v1.0.121
-  debug: true
   defaultUrl: "/lab"
   memory:
     limit: 1G
@@ -187,9 +195,3 @@ prePuller:
     enabled: true
   hook:
      enabled: false
-
-auth:
-  admin:
-    users:
-      - admin
-      - try
