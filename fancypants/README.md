@@ -34,5 +34,5 @@ The remainder of the changes in the [z2jh-config-fancy.yaml](z2jh-config-fancy.y
 
 In order to enable the fancy layout, just upgrade Jupyterhub:
 ```
-microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.5 --values=z2jh-config-fancy.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=1.0.1 --values=z2jh-config-fancy.yaml
 ```

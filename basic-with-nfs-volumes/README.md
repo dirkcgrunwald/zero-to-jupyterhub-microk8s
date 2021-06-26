@@ -19,7 +19,7 @@ The supplied configuration will try to create a 20Gi volume from which individua
 
 The file [z2jh-config-with-nfs.yaml](z2jh-config-with-nfs.yaml) changes the storage allocation information to give each user 0.5Gi of storage from the NFS server. Update the Jupyterhub configurating using that config file:
 ```
-microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=1.0.0 --values=z2jh-config-with-nfs.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=1.0.1 --values=z2jh-config-with-nfs.yaml
 ```
 Now, try to log into your Jupyterhub again using a new user (_e.g._ user 'try' with password 'again'). It should start up as normal, but when you look at the PVC you'll see it's an NFS volume rather than a built-in one.
 ```

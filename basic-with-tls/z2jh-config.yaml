@@ -1,3 +1,6 @@
+debug:
+  enabled: true
+
 proxy:
   secretToken: "1234123412341234123412341234123412341234123412341234123412341234"
   service:
@@ -5,7 +8,7 @@ proxy:
   https:
     enabled: true
     hosts:
-      - "beast.cs.colorado.edu"
+      - "129.114.109.246.nip.io"
     letsencrypt:
       contactEmail: "grunwald@colorado.edu"
 

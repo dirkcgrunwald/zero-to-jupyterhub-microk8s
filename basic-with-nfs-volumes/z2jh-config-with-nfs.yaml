@@ -7,7 +7,7 @@ proxy:
   https:
     enabled: true
     hosts:
-      - "beast.cs.colorado.edu"
+      - "129.114.109.246.nip.io"
     letsencrypt:
       contactEmail: "grunwald@colorado.edu"
 

@@ -55,7 +55,7 @@ Make certain you're in the "basic" directory since some file paths assume that.
 
 The quick-start steps are:
 ```
-microk8s helm3 install jhub jupyterhub/jupyterhub --version=1.00.0 --values=z2jh-config.yaml
+microk8s helm3 install jhub jupyterhub/jupyterhub --version=1.0.1 --values=z2jh-config.yaml
 ```
 This will take a few seconds and you'll eventually see a message thanking you for installing jupyterhub.
 

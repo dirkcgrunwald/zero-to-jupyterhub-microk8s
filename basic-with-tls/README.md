@@ -19,7 +19,7 @@ The Z2JH chart supports using [letsencrypt](https://letsencrypt.org/) to automat
 ```
 Then, you should be able to update your Helm configuration
 ```
-microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=0.10.5 --values=z2jh-config.yaml
+microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=1.0.1 --values=z2jh-config.yaml
 ```
 It may take a few minutes for your `LoadBalancer` to register an address,
 and when you check the service endpoints, you should now see it serving port 443 as well as port 80:
