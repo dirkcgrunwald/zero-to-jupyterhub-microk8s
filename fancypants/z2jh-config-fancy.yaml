@@ -112,8 +112,8 @@ hub:
 singleuser:
   startTimeout: 900
   image:
-    name: docker.io/dirkcgrunwald/notebook
-    tag: v6.4.0
+    name: dirkcgrunwald/notebook
+    tag: v4.6.1
   defaultUrl: "/lab"
   memory:
     limit: 1G
@@ -148,7 +148,7 @@ singleuser:
     - display_name: "2400<br>Perflab<br>Grading"
       description: "C++, OpenMP"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook:v6.4.0"
+        image: "dirkcgrunwald/notebook:v4.6.1"
         cpu_limit: 2
         cpu_guarantee: 1.0
         mem_limit: 2G
@@ -158,7 +158,7 @@ singleuser:
     - display_name: "3155<br>Programming<br>Languages"
       description: "Java and Scala"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-pl:v6.4.0"
+        image: "dirkcgrunwald/notebook-pl:v4.6.1"
         cpu_limit: 2
         cpu_guarantee: 0.20
         mem_limit: 3G
@@ -166,23 +166,27 @@ singleuser:
     - display_name: "3202<br>Artificial<br>Intelligence"
       description: "Python + AI tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-ai:v6.4.0"
+        image: "dirkcgrunwald/notebook-ai:v4.6.1"
     - display_name: "3287<br>Database<br>Systems"
       description: "Python, SQL and XML tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-db:v6.4.0"
+        image: "dirkcgrunwald/notebook-db:v4.6.1"
+    - display_name: "4254<br>Datacenter<br>Systems"
+      description: "Hadoop, Spark"
+      kubespawner_override:
+        image: "dirkcgrunwald/notebook-dc:v4.6.1"
     - display_name: "4446/5446<br>Chaotic<br>Dynamics"
       description: "basic + TISEAN"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-chaos:v6.4.0"
+        image: "dirkcgrunwald/notebook-chaos:v4.6.1"
     - display_name: "4622<br>Machine<br>Learning"
       description: "Python + ML tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-ai:v6.4.0"
+        image: "dirkcgrunwald/notebook-ai:v4.6.1"
     - display_name: "----<br>Test"
       description: "Testing prior to deployment"
       kubespawner_override:
-        image: "docker.io/dirkcgrunwald/notebook:v6.4.0"
+        image: "dirkcgrunwald/notebook:v4.6.1"
 #
 # Cull notebooks that are idle more than half an hour
 # and check every 5 minutes (300 seconds)
