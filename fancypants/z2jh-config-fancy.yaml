@@ -10,7 +10,7 @@ proxy:
   https:
     enabled: true
     hosts:
-      - "beast.cs.colorado.edu"
+      - "129.114.109.246.nip.io"
     letsencrypt:
       contactEmail: "grunwald@colorado.edu"
 
@@ -112,8 +112,8 @@ hub:
 singleuser:
   startTimeout: 900
   image:
-    name: dirkcgrunwald/notebook
-    tag: v4.6.1
+    name: docker.io/dirkcgrunwald/notebook
+    tag: latest
   defaultUrl: "/lab"
   memory:
     limit: 1G
@@ -129,6 +129,8 @@ singleuser:
     - display_name: "Default<br>Coding<br>Environment"
       description: "Should work for most classes"
       default: true
+      kubespawner_override:
+        image: docker.io/jupyter/datascience-notebook:latest
     - display_name: "1300<br>Starting<br>Computing"
       description: "C++ and Python"
     - display_name: "2270<br>Data<br>Structures"
@@ -148,7 +150,9 @@ singleuser:
     - display_name: "2400<br>Perflab<br>Grading"
       description: "C++, OpenMP"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook
+          tag: latest
         cpu_limit: 2
         cpu_guarantee: 1.0
         mem_limit: 2G
@@ -158,7 +162,9 @@ singleuser:
     - display_name: "3155<br>Programming<br>Languages"
       description: "Java and Scala"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-pl:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-pl
+          tag: latest
         cpu_limit: 2
         cpu_guarantee: 0.20
         mem_limit: 3G
@@ -166,27 +172,43 @@ singleuser:
     - display_name: "3202<br>Artificial<br>Intelligence"
       description: "Python + AI tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-ai:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-ai
+          tag: latest
     - display_name: "3287<br>Database<br>Systems"
       description: "Python, SQL and XML tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-db:v4.6.1"
-    - display_name: "4254<br>Datacenter<br>Systems"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-db
+          tag: latest
+    - display_name: "4253<br>Datacenter<br>Systems"
       description: "Hadoop, Spark"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-dc:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-dc
+          tag: latest
+        cpu_limit: 2
+        cpu_guarantee: 0.20
+        mem_limit: 3G
+        mem_guarantee: 2000M
     - display_name: "4446/5446<br>Chaotic<br>Dynamics"
       description: "basic + TISEAN"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-chaos:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-chaos
+          tag: latest
     - display_name: "4622<br>Machine<br>Learning"
       description: "Python + ML tools"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook-ai:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook-ai
+          tag: latest
     - display_name: "----<br>Test"
       description: "Testing prior to deployment"
       kubespawner_override:
-        image: "dirkcgrunwald/notebook:v4.6.1"
+        image:
+          name: docker.io/dirkcgrunwald/notebook
+          tag: latest
 #
 # Cull notebooks that are idle more than half an hour
 # and check every 5 minutes (300 seconds)
