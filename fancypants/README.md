@@ -36,3 +36,7 @@ In order to enable the fancy layout, just upgrade Jupyterhub:
 ```
 microk8s helm3 upgrade jhub jupyterhub/jupyterhub --version=1.0.1 --values=z2jh-config-fancy.yaml
 ```
+
+The following is an example of the layout we use. Individual classes have an envrionment with tools specific to a class. Having multiple environments allows us to de-couple dependences between classes (e.g. they may need different Java versions or whatever).
+
+![sample screen shot](example-fancy-pants.PNG)
